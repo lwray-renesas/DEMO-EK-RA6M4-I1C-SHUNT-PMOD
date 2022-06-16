@@ -1,0 +1,19 @@
+struct parameter_list { char *name; rl78_i1c_message_key key_value; };
+%%
+Voltage RMS, V_RMS
+Current RMS Shunt, I_RMS_SHUNT
+Current RMS CT, I_RMS_CT
+Active Power, ACT_POWER
+Fundamental Power, FUND_POWER
+Reactive Power, REACT_POWER
+Apparent Power, APPAR_POWER
+Power Factor, P_FACT
+Power Factor Sign, P_FACT_SIGN
+Line Frequency, LINE_FREQ
+Total Active Energy, TOTAL_ACT_ENERGY
+Total Reactive Energy, TOTAL_REACT_ENERGY
+Total Apparent Energy, TOTAL_APPAR_ENERGY
+Active Max Demand, ACT_MAX_DEMAND
+Reactive Max Demand, REACT_MAX_DEMAND
+Apparent Max Demand, APPAR_MAX_DEMAND
+Ambient Temperature, AMB_TEMP
