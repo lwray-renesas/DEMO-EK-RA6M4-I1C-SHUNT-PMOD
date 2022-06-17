@@ -55,7 +55,7 @@ void rl78i1c_thread_entry(void *pvParameters)
         Wait_for_cmd();
 
         /* Try parse the i1c data*/
-        parsed_msg = Parser(rl78i1c_raw_msg_buffer, bytes_in_raw_buffer);
+        parsed_msg = Parse_display(rl78i1c_raw_msg_buffer, bytes_in_raw_buffer);
 
         /* Send out the data to USB*/
         Write_rl78i1c_msg_to_usb(parsed_msg);
@@ -152,7 +152,7 @@ static void Write_rl78i1c_msg_to_usb(rl78_i1c_message_t const * msg)
     /* Write data to USB*/
     err = R_USB_Write(&g_basic0_ctrl, (uint8_t *)l_buf, (uint32_t)strlen(l_buf),  USB_CLASS_PCDC);
 
-    /* USB Write will fail if we are not connected - so only blocking wait if we are connected*/
+    /* USB Write will fail if we are not connected - so only blocking wait if we are connected and the write was successful*/
     if(FSP_SUCCESS == err)
     {
         /* Wait USB Write to complete */

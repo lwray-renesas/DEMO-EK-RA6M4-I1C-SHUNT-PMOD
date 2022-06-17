@@ -26,7 +26,9 @@ typedef struct
     char p_fact_sign[16];   /**< Power Factor Sign*/
 }rl78_i1c_message_t;
 
-/** @brief Parse the raw inputs into valid data.*/
-rl78_i1c_message_t const * Parser(char const * p_raw_data_buf, uint32_t num_bytes_in_raw_buf);
+/** @brief Parse the raw input from the display command into valid data.
+ * This function is NOT thread safe & NOT re-entrant.
+ */
+rl78_i1c_message_t const * Parse_display(char const * p_raw_data_buf, uint32_t num_bytes_in_raw_buf);
 
 #endif /* PARSER_RL78I1C_PARSER_H_ */

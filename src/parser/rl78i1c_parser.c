@@ -76,12 +76,6 @@ typedef enum
     buffer_processed        /**< State representing buffer processed*/
 }parsing_states_t;
 
-/********************************************************************************
- *                                  VARIABLES                                   *
- ********************************************************************************/
-/** rl78i1c message*/
-static rl78_i1c_message_t rl78i1c_msg;
-
 /** @brief Computes hash of input string according to Gperf spec.
  * @param str - input string for computing hash.
  * @param len - length of input string.
@@ -190,27 +184,9 @@ static parameter_list_t const * Find_rl78i1c_param(const char *str, uint32_t len
 }
 /*END OF FUNCTION*/
 
-/** @brief Sets the global message structure acording to parameter passed
- * @param key - key of the parameter in the message to set.
- * @param value_str - valuye string to set.
- */
-static void Set_rl78i1c_message_param(rl78_i1c_message_key key, char const * value_str)
+rl78_i1c_message_t const * Parse_display(char const * p_raw_data_buf, uint32_t num_bytes_in_raw_buf)
 {
-    /* If power factor sign just copy the string across*/
-    if(P_FACT_SIGN == key)
-    {
-        (void)strcpy(rl78i1c_msg.p_fact_sign, value_str);
-    }
-    else
-    {
-        /* Access the struct as an array because the enum values line up correctly*/
-        *((float *) (&rl78i1c_msg) + key) = strtof(value_str, NULL);
-    }
-}
-/*END OF FUNCTION*/
-
-rl78_i1c_message_t const * Parser(char const * p_raw_data_buf, uint32_t num_bytes_in_raw_buf)
-{
+    static rl78_i1c_message_t rl78i1c_msg;
     parsing_states_t parsing_state = look_for_start;
     uint32_t parsing_byte_index = 0U;
     parameter_list_t const * l_param = NULL;
@@ -227,7 +203,7 @@ rl78_i1c_message_t const * Parser(char const * p_raw_data_buf, uint32_t num_byte
                     parsing_byte_index += 1U;
                 }
 
-                parsing_state = !BUFFER_OVERRUN(parsing_byte_index, num_bytes_in_raw_buf) ? look_for_parameter : buffer_processed;
+                parsing_state = BUFFER_OVERRUN(parsing_byte_index, num_bytes_in_raw_buf) ? buffer_processed : look_for_parameter;
             }
             break;
 
@@ -264,7 +240,7 @@ rl78_i1c_message_t const * Parser(char const * p_raw_data_buf, uint32_t num_byte
                 }
                 else
                 {
-                    parsing_state = !BUFFER_OVERRUN(parsing_byte_index, num_bytes_in_raw_buf) ? look_for_value : buffer_processed;
+                    parsing_state = BUFFER_OVERRUN(parsing_byte_index, num_bytes_in_raw_buf) ? buffer_processed : look_for_value;
                 }
             }
             break;
@@ -293,8 +269,18 @@ rl78_i1c_message_t const * Parser(char const * p_raw_data_buf, uint32_t num_byte
 
                 value_buf[value_len] = '\0'; /* NULL Terminate*/
 
-                Set_rl78i1c_message_param(l_param->key_value, value_buf);
-                parsing_state = !BUFFER_OVERRUN(parsing_byte_index, num_bytes_in_raw_buf) ? look_for_end : buffer_processed;
+                /* If power factor sign just copy the string across*/
+                if(P_FACT_SIGN == l_param->key_value)
+                {
+                    (void)strcpy(rl78i1c_msg.p_fact_sign, value_buf);
+                }
+                else
+                {
+                    /* Access the struct as an array because the enum values line up correctly*/
+                    *((float *) (&rl78i1c_msg) + l_param->key_value) = strtof(value_buf, NULL);
+                }
+
+                parsing_state = BUFFER_OVERRUN(parsing_byte_index, num_bytes_in_raw_buf) ? buffer_processed : look_for_end;
             }
             break;
 
@@ -306,7 +292,7 @@ rl78_i1c_message_t const * Parser(char const * p_raw_data_buf, uint32_t num_byte
                     parsing_byte_index += 1U;
                 }
 
-                parsing_state = !BUFFER_OVERRUN(parsing_byte_index, num_bytes_in_raw_buf) ? look_for_start : buffer_processed;
+                parsing_state = BUFFER_OVERRUN(parsing_byte_index, num_bytes_in_raw_buf) ? buffer_processed : look_for_start;
             }
             break;
 
