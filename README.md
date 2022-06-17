@@ -14,3 +14,7 @@ Demonstration project for running the RL78/I1C Single Phase Shunt-based Metrolog
   - Streams out data from the RL78/I1c PMOD.
   - Requires ANSI compliant serial terminal as the program uses escape sequences for coloured text and cursor manipulation.
   - TeraTerm was used in development.
+
+## Notes
+This project has made use of [Gperf](https://www.gnu.org/software/gperf/) to generate the perfect hash function.
+In order to manipulate the parser an understanding of this tool is required.
