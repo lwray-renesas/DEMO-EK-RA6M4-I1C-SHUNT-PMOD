@@ -1,11 +1,8 @@
-
 #include "rl78i1c_parser.h"
 #include "stdlib.h"
 #include "string.h"
 
-/********************************************************************************
- *                                  MACROS                                      *
- ********************************************************************************/
+
 /** @brief GPERF Minimum word length of any tokens to parse - for length validation*/
 #define MIN_WORD_LENGTH 11
 /** @brief GPERF Maximum word length of any tokens to parse - for length validation*/
@@ -33,9 +30,6 @@
 #define BUFFER_OVERRUN(p, q)    ((p) >= (q))
 
 
-/********************************************************************************
- *                         TYPES, ENUMS & STRUCTS                               *
- ********************************************************************************/
 /** @enum enumerated values for populating rl78i1c message*/
 typedef enum
 {
@@ -75,6 +69,7 @@ typedef enum
     look_for_end,           /**< State representing looking for end of token string*/
     buffer_processed        /**< State representing buffer processed*/
 }parsing_states_t;
+
 
 /** @brief Computes hash of input string according to Gperf spec.
  * @param str - input string for computing hash.

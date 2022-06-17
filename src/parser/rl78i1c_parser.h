@@ -1,4 +1,3 @@
-
 #ifndef PARSER_RL78I1C_PARSER_H_
 #define PARSER_RL78I1C_PARSER_H_
 

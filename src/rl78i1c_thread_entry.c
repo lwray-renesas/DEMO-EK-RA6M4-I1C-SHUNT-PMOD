@@ -6,6 +6,7 @@
 /** @brief maximum raw buffer size - 3k*/
 #define MAX_RAW_BUF_SIZE  3072U
 
+
 /** @brief CMD_PROMPT string*/
 static char const CMD_PROMPT[] = "CMD>";
 /** @brief DISPLAY_COMMAND string*/
@@ -41,14 +42,14 @@ void rl78i1c_thread_entry(void *pvParameters)
     err = R_USB_Open (&g_basic0_ctrl, &g_basic0_cfg);
     assert(FSP_SUCCESS == err);
 
-    /* Wait indefinitely for the CMD_PROMPT string - first time is usless*/
+    /* Wait indefinitely for the CMD_PROMPT string - first time is useless*/
     Wait_for_cmd();
 
     while (1)
     {
         rl78_i1c_message_t const * parsed_msg;
 
-        /* Send the display command again*/
+        /* Send the display command*/
         Send_display();
 
         /* Wait indefinitely for the CMD_PROMPT string - this indicates data is ready for parsing*/
@@ -62,7 +63,6 @@ void rl78i1c_thread_entry(void *pvParameters)
     }
 }
 /* END OF FUNCTION*/
-
 
 static void Wait_for_cmd(void)
 {
