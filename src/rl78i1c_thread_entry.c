@@ -7,14 +7,12 @@
 #define MAX_RAW_BUF_SIZE  3072U
 
 
-/** @brief CMD_PROMPT string*/
-static char const CMD_PROMPT[] = "CMD>";
-/** @brief DISPLAY_COMMAND string*/
-static char const DISPLAY_COMMAND[] = "display\r";
 /** @brief raw character buffer from the rl78i1c UART*/
 static char rl78i1c_raw_msg_buffer[MAX_RAW_BUF_SIZE] = {0};
 /** @brief raw character buffer fill level*/
 static uint32_t bytes_in_raw_buffer = 0U;
+/** @brief global variable used to read data (must be global to use visual expressions)*/
+static rl78_i1c_message_t const * parsed_msg;
 
 
 /** @brief Wait indefinitely for the CMD_PROMPT message to be received.*/
@@ -47,8 +45,6 @@ void rl78i1c_thread_entry(void *pvParameters)
 
     while (1)
     {
-        rl78_i1c_message_t const * parsed_msg;
-
         /* Send the display command*/
         Send_display();
 
@@ -66,6 +62,7 @@ void rl78i1c_thread_entry(void *pvParameters)
 
 static void Wait_for_cmd(void)
 {
+    static char const CMD_PROMPT[] = "CMD>";
     char * p_buf = rl78i1c_raw_msg_buffer;
 
     /* Reset the byte counter before waiting for the cmd prompt*/
@@ -99,6 +96,7 @@ static void Wait_for_cmd(void)
 
 static void Send_display(void)
 {
+    static char const DISPLAY_COMMAND[] = "display\r";
     static char const * end_of_display_cmd = DISPLAY_COMMAND + (sizeof(DISPLAY_COMMAND)-1U);
 
     /* Loop through the charactors of the display command with a 50ms pause between them*/
